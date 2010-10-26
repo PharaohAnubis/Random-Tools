@@ -3,12 +3,11 @@
 use warnings;
 use strict;
 use Getopt::Std;
-use POSIX qw(floor);
 use IO::Handle;
 
 my %opts;
-my $VERSION = "0.21";
-getopts('h:o:q:x:b:i:', \%opts);
+my $VERSION = "0.3";
+getopts('huro:q:x:b:', \%opts);
 
 if ($opts{'h'}) {
 	HELP_MESSAGE();
@@ -17,32 +16,49 @@ if ($opts{'h'}) {
 
 my $infile = shift @ARGV;
 if (!$infile) {
-	print("Usage: x264pr.pl [options] infile");
+	print("Usage: x264pr.pl [options] infile\n");
 	exit 1;
 }
 
-my $outfile	= $opts{'o'} ? $opts{'o'} : "${infile}.mkv";
-my $qp  	= $opts{'q'} ? $opts{'q'} : 0;
+my $outfile	    = $opts{'o'} ? $opts{'o'} : "${infile}.mkv";
+my $qp  	    = $opts{'q'} ? $opts{'q'} : 0;
 my $x264options = $opts{'x'} ? $opts{'x'} : 0;
-my $batch       = $opts{'b'} ? $opts{'b'} : 0;
+my $batch       = $opts{'b'} ? $opts{'b'} : "${infile}.bat";
+my $unlink      = $opts{'u'} ? $opts{'u'} : 0;
+my $run         = $opts{'r'} ? $opts{'r'} : 0;
 
 open my $x264, "< $x264options" or die "Cannot read template: $!";
 
 open my $encode, "> $batch" or die "Cannot write encoding batch file: $!";
 
+my @cmd;
+push(@cmd,"#!/bin/sh\n");
+
 while(<$x264>)
 {
-   print $encode $_;
+   while (/(.+)/g) {
+      push(@cmd, $1);
+   }
 }
+
+if ($qp) {
+   push(@cmd,"--qpfile","\"$qp\"")
+}
+
+push(@cmd,"--output","\"$outfile\"","\"$infile\"");
 {
-printf $encode " --qpfile \"$qp\" --output \"$outfile\" \"$infile\" "
+print $encode join(' ',@cmd,"\n");
 }
 close $x264;
 close $encode;
-{
-system("$batch");
-unlink $batch;
+if ($run) {
+   chmod 0755, $batch;
+   system("./${batch}");
 }
+if ($unlink) {
+   unlink $batch;
+}
+
 exit 0;
 sub HELP_MESSAGE {
 	print <<EOF;
@@ -51,8 +67,6 @@ Usage: x264pr.pl [options] infile
 Where infile is the video to encode. It does remove automatically your .bat file after encoding.
 
 Options:
--i INFILE
-    The avisynth script to encode.
 
 -o OUTFILE
     The filename of the final encode.
@@ -62,6 +76,12 @@ Options:
 
 -b BATCH
     The .bat file to run the encode.
+
+-r
+    Execute BATCH.
+
+-u
+    Remove BATCH after execution.
 EOF
 }
 
