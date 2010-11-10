@@ -1,0 +1,3 @@
+[submodule "vfr"]
+	path = vfr
+	url = git://github.com/wiiaboo/vfr.git
