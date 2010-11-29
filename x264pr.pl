@@ -64,7 +64,7 @@ sub HELP_MESSAGE {
 	print <<EOF;
 $0 $VERSION By PharaohAnubis
 Usage: x264pr.pl [options] infile
-Where infile is the video to encode. It does remove automatically your .bat file after encoding.
+Where infile is the video to encode. Thanks to RiCON for the fixes.
 
 Options:
 
@@ -72,10 +72,10 @@ Options:
     The filename of the final encode.
 
 -x X264OPTIONS
-    The .txt file where the options are for the encode.
+    The text file where the options are for the encode.
 
 -b BATCH
-    The .bat file to run the encode.
+    BATCH file to run the encode.
 
 -r
     Execute BATCH.
