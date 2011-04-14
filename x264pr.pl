@@ -85,7 +85,7 @@ Where infile is the video to encode.
 
 Options:
 -i INFILE
-	Your video to encode.
+    Your video to encode.
 
 -o OUTFILE
     The filename of the final encode.
@@ -100,12 +100,12 @@ Options:
     Execute BATCH on Windows.
 	
 -e
-	Execute BATCH on Unix.
+    Execute BATCH on Unix.
 
 -u
     Remove BATCH after execution.(Should always be first option on command line)
 	
 -l
-	Use it if you want a shellscript.
+    Use it if you want a shellscript.
 EOF
 }
