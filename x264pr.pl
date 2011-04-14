@@ -54,7 +54,6 @@ while(<$x264>)
 }
 }
 
-
 if ($qp) {
    push(@cmd,"--qpfile","\"$qp\"")
 }
